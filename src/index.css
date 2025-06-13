@@ -1,0 +1,346 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Comprehensive dropdown hover color fixes */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+select option {
+  background-color: white !important;
+  color: #1f2937 !important;
+}
+
+select option:hover,
+select option:focus,
+select option:checked,
+select option:active,
+select option[selected] {
+  background-color: #FFF4E8 !important;
+  color: #1f2937 !important;
+  background: #FFF4E8 !important;
+}
+
+/* Force override browser defaults */
+select:focus option:hover,
+select:focus option:checked,
+select:focus option:active {
+  background-color: #FFF4E8 !important;
+  background: #FFF4E8 !important;
+  color: #1f2937 !important;
+}
+
+/* WebKit specific fixes */
+select option:hover::-webkit-option,
+select option:checked::-webkit-option {
+  background-color: #FFF4E8 !important;
+  background: #FFF4E8 !important;
+}
+
+/* Firefox specific fixes */
+@-moz-document url-prefix() {
+  select option:hover,
+  select option:checked {
+    background-color: #FFF4E8 !important;
+    background: #FFF4E8 !important;
+  }
+}
+
+/* Custom styles for search result dropdowns */
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #FFF4E8 !important;
+  color: #1f2937 !important;
+}
+
+/* Additional overrides for any remaining blue states */
+*:hover,
+*:focus,
+*:active {
+  outline-color: #FF8B00 !important;
+}
+
+select:focus {
+  outline-color: #FF8B00 !important;
+  border-color: #FF8B00 !important;
+  box-shadow: 0 0 0 2px rgba(255, 139, 0, 0.2) !important;
+}
+
+/* 3D Hero Background Animation */
+.hero-3d-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.floating-shape {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(8, 91, 89, 0.1), rgba(255, 139, 0, 0.1));
+  animation: float 6s ease-in-out infinite;
+  backdrop-filter: blur(1px);
+}
+
+.floating-shape:nth-child(1) {
+  width: 80px;
+  height: 80px;
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+
+.floating-shape:nth-child(2) {
+  width: 120px;
+  height: 120px;
+  top: 60%;
+  left: 80%;
+  animation-delay: -2s;
+  animation-duration: 10s;
+}
+
+.floating-shape:nth-child(3) {
+  width: 60px;
+  height: 60px;
+  top: 80%;
+  left: 20%;
+  animation-delay: -4s;
+  animation-duration: 7s;
+}
+
+.floating-shape:nth-child(4) {
+  width: 100px;
+  height: 100px;
+  top: 30%;
+  left: 70%;
+  animation-delay: -1s;
+  animation-duration: 9s;
+}
+
+.floating-shape:nth-child(5) {
+  width: 90px;
+  height: 90px;
+  top: 10%;
+  left: 60%;
+  animation-delay: -3s;
+  animation-duration: 11s;
+}
+
+.floating-shape:nth-child(6) {
+  width: 70px;
+  height: 70px;
+  top: 70%;
+  left: 5%;
+  animation-delay: -5s;
+  animation-duration: 6s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-15px) rotate(180deg);
+  }
+  75% {
+    transform: translateY(-30px) translateX(5px) rotate(270deg);
+  }
+}
+
+.geometric-shape {
+  position: absolute;
+  background: linear-gradient(45deg, rgba(8, 91, 89, 0.08), rgba(255, 139, 0, 0.08));
+  animation: geometricFloat 12s linear infinite;
+}
+
+.geometric-shape:nth-child(7) {
+  width: 40px;
+  height: 40px;
+  top: 15%;
+  left: 85%;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  animation-delay: -2s;
+}
+
+.geometric-shape:nth-child(8) {
+  width: 50px;
+  height: 50px;
+  top: 45%;
+  left: 15%;
+  clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+  animation-delay: -4s;
+}
+
+.geometric-shape:nth-child(9) {
+  width: 35px;
+  height: 35px;
+  top: 75%;
+  left: 75%;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  animation-delay: -6s;
+}
+
+@keyframes geometricFloat {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-40px) translateX(20px) rotate(90deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-20px) translateX(-30px) rotate(180deg);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-60px) translateX(10px) rotate(270deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+/* Gradient orbs */
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: orbFloat 15s ease-in-out infinite;
+}
+
+.gradient-orb:nth-child(10) {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(8, 91, 89, 0.15) 0%, transparent 70%);
+  top: 10%;
+  left: 20%;
+  animation-delay: -3s;
+}
+
+.gradient-orb:nth-child(11) {
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(255, 139, 0, 0.12) 0%, transparent 70%);
+  top: 60%;
+  left: 60%;
+  animation-delay: -7s;
+}
+
+@keyframes orbFloat {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Content overlay to ensure text is readable */
+.hero-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* AI Recommendation Card Styling */
+.ai-recommendation-card {
+  position: relative;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.02) 0%, 
+    rgba(147, 51, 234, 0.02) 25%, 
+    rgba(6, 182, 212, 0.02) 50%, 
+    rgba(59, 130, 246, 0.02) 75%, 
+    rgba(147, 51, 234, 0.02) 100%
+  );
+  background-size: 400% 400%;
+  animation: aiGradientShift 8s ease-in-out infinite;
+}
+
+.ai-recommendation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.05) 0%, 
+    rgba(147, 51, 234, 0.05) 25%, 
+    rgba(6, 182, 212, 0.05) 50%, 
+    rgba(59, 130, 246, 0.05) 75%, 
+    rgba(147, 51, 234, 0.05) 100%
+  );
+  background-size: 400% 400%;
+  animation: aiGradientShift 12s ease-in-out infinite reverse;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+@keyframes aiGradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+}
+
+/* Floating particles for AI cards */
+.ai-recommendation-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 40% 60%, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px, 30px 30px, 40px 40px;
+  animation: aiParticleFloat 20s linear infinite;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes aiParticleFloat {
+  0% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-10px) translateX(5px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.3;
+  }
+}
