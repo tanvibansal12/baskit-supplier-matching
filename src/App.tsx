@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { RequestForm } from './components/RequestForm';
 import { SupplierResults } from './components/SupplierResults';
+import { SupplierDashboard } from './components/supplier/SupplierDashboard';
 import { LoginModal } from './components/LoginModal';
 import { POModal } from './components/POModal';
 import { ERPOrderListPage } from './components/ERPOrderListPage';
@@ -241,13 +242,37 @@ function App() {
       id: Date.now().toString(),
       name: userData.name,
       email: userData.email,
-      isLoggedIn: true
+      role: 'distributor', // Default role
+      isLoggedIn: true,
+      companyName: `${userData.name} Company`
     });
   };
 
   const handleLogout = () => {
     setUser(null);
     setShortlist([]);
+  };
+
+  const handleRoleChange = (newRole: 'distributor' | 'supplier') => {
+    if (user) {
+      setUser({
+        ...user,
+        role: newRole,
+        companyName: newRole === 'supplier' 
+          ? `${user.name} Manufacturing` 
+          : `${user.name} Distribution`
+      });
+      
+      // Reset to hero when switching roles
+      setCurrentStep('hero');
+      setIsFormCollapsed(false);
+      setItems([]);
+      setDeliveryPreferences({
+        location: '',
+        preferredLeadTime: ''
+      });
+      setSuppliers([]);
+    }
   };
 
   const handleAddToShortlist = (supplierId: string, notes: string) => {
@@ -414,6 +439,30 @@ function App() {
     return <MarketplaceApp />;
   }
 
+  // Render supplier dashboard if user is a supplier
+  if (user?.role === 'supplier') {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header 
+          user={user} 
+          onLogin={() => setIsLoginModalOpen(true)} 
+          onLogout={handleLogout}
+          onGoHome={handleGoHome}
+          onRoleChange={handleRoleChange}
+        />
+        
+        <SupplierDashboard user={user} />
+
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          onLogin={handleLogin}
+        />
+      </div>
+    );
+  }
+
+  // Render distributor flow (existing logic)
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
@@ -421,6 +470,7 @@ function App() {
         onLogin={() => setIsLoginModalOpen(true)} 
         onLogout={handleLogout}
         onGoHome={handleGoHome}
+        onRoleChange={handleRoleChange}
       />
       
       {currentStep === 'hero' && (
