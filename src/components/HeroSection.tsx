@@ -1,11 +1,12 @@
 import React from 'react';
-import { ArrowRight, Target, Zap } from 'lucide-react';
+import { ArrowRight, Target, Zap, Store } from 'lucide-react';
 
 interface HeroSectionProps {
   onStartRecommendation: () => void;
+  onGoToMarketplace?: () => void;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ onStartRecommendation }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ onStartRecommendation, onGoToMarketplace }) => {
   return (
     <section className="bg-white py-20 lg:py-32 relative overflow-hidden">
       {/* Animated 3D Background */}
@@ -48,7 +49,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onStartRecommendation 
 Match with trusted suppliers, compare based on delivery and pricing, and create POs directly from one place.
             </p>
             
-            <div className="mb-8">
+            <div className="mb-8 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={onStartRecommendation}
                 className="bg-[#FF8B00] text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#e67a00] transition-all transform hover:scale-105 shadow-lg flex items-center justify-center"
@@ -56,6 +57,16 @@ Match with trusted suppliers, compare based on delivery and pricing, and create 
                 Find Suppliers
                 <ArrowRight className="ml-2 h-5 w-5" />
               </button>
+              
+              {onGoToMarketplace && (
+                <button
+                  onClick={onGoToMarketplace}
+                  className="bg-[#085B59] text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-[#074e4c] transition-all transform hover:scale-105 shadow-lg flex items-center justify-center"
+                >
+                  <Store className="mr-2 h-5 w-5" />
+                  Marketplace
+                </button>
+              )}
             </div>
           </div>
 

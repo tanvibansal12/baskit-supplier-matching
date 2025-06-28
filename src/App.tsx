@@ -6,11 +6,12 @@ import { SupplierResults } from './components/SupplierResults';
 import { LoginModal } from './components/LoginModal';
 import { POModal } from './components/POModal';
 import { ERPOrderListPage } from './components/ERPOrderListPage';
+import { MarketplaceApp } from './components/marketplace/MarketplaceApp';
 import { ProcurementItem, DeliveryPreferences, Supplier, User, ShortlistItem } from './types';
 import { mockSuppliers } from './data/mockData';
 
 function App() {
-  const [currentStep, setCurrentStep] = useState<'hero' | 'form' | 'results'>('hero');
+  const [currentStep, setCurrentStep] = useState<'hero' | 'form' | 'results' | 'marketplace'>('hero');
   const [items, setItems] = useState<ProcurementItem[]>([]);
   const [deliveryPreferences, setDeliveryPreferences] = useState<DeliveryPreferences>({
     location: '',
@@ -25,11 +26,13 @@ function App() {
   const [isFormCollapsed, setIsFormCollapsed] = useState(false);
   const [showERPPage, setShowERPPage] = useState(false);
 
-  // Check if we should show ERP page based on URL
+  // Check if we should show ERP page or marketplace based on URL
   useEffect(() => {
     const path = window.location.pathname;
     if (path === '/erp-orders') {
       setShowERPPage(true);
+    } else if (path === '/marketplace') {
+      setCurrentStep('marketplace');
     }
   }, []);
 
@@ -218,6 +221,10 @@ function App() {
     setCurrentStep('form');
   };
 
+  const handleGoToMarketplace = () => {
+    setCurrentStep('marketplace');
+  };
+
   const handleGoHome = () => {
     setCurrentStep('hero');
     setIsFormCollapsed(false);
@@ -402,6 +409,11 @@ function App() {
     return <ERPOrderListPage />;
   }
 
+  // If showing marketplace, render marketplace app
+  if (currentStep === 'marketplace') {
+    return <MarketplaceApp />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
@@ -412,7 +424,10 @@ function App() {
       />
       
       {currentStep === 'hero' && (
-        <HeroSection onStartRecommendation={handleStartRecommendation} />
+        <HeroSection 
+          onStartRecommendation={handleStartRecommendation}
+          onGoToMarketplace={handleGoToMarketplace}
+        />
       )}
 
       {(currentStep === 'form' || currentStep === 'results') && (
