@@ -4,6 +4,7 @@ import { HeroSection } from './components/HeroSection';
 import { RequestForm } from './components/RequestForm';
 import { SupplierResults } from './components/SupplierResults';
 import { SupplierDashboard } from './components/supplier/SupplierDashboard';
+import { RoleSelection } from './components/RoleSelection';
 import { LoginModal } from './components/LoginModal';
 import { POModal } from './components/POModal';
 import { ERPOrderListPage } from './components/ERPOrderListPage';
@@ -12,7 +13,7 @@ import { ProcurementItem, DeliveryPreferences, Supplier, User, ShortlistItem } f
 import { mockSuppliers } from './data/mockData';
 
 function App() {
-  const [currentStep, setCurrentStep] = useState<'hero' | 'form' | 'results' | 'marketplace'>('hero');
+  const [currentStep, setCurrentStep] = useState<'role-selection' | 'hero' | 'form' | 'results' | 'marketplace'>('role-selection');
   const [items, setItems] = useState<ProcurementItem[]>([]);
   const [deliveryPreferences, setDeliveryPreferences] = useState<DeliveryPreferences>({
     location: '',
@@ -218,6 +219,22 @@ function App() {
     setIsFormCollapsed(true);
   };
 
+  const handleRoleSelect = (role: 'distributor' | 'supplier') => {
+    // Auto-login user with selected role
+    setUser({
+      id: Date.now().toString(),
+      name: 'Demo User',
+      email: 'demo@baskit.app',
+      role: role,
+      isLoggedIn: true,
+      companyName: role === 'supplier' ? 'Demo Manufacturing Co.' : 'Demo Distribution Ltd.',
+      region: 'DKI Jakarta'
+    });
+    
+    // Navigate to appropriate starting point
+    setCurrentStep('hero');
+  };
+
   const handleStartRecommendation = () => {
     setCurrentStep('form');
   };
@@ -242,7 +259,7 @@ function App() {
       id: Date.now().toString(),
       name: userData.name,
       email: userData.email,
-      role: 'distributor', // Default role
+      role: user?.role || 'distributor', // Keep existing role or default to distributor
       isLoggedIn: true,
       companyName: `${userData.name} Company`
     });
@@ -251,6 +268,7 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     setShortlist([]);
+    setCurrentStep('role-selection'); // Return to role selection
   };
 
   const handleRoleChange = (newRole: 'distributor' | 'supplier') => {
@@ -437,6 +455,11 @@ function App() {
   // If showing marketplace, render marketplace app
   if (currentStep === 'marketplace') {
     return <MarketplaceApp />;
+  }
+
+  // Show role selection if no user or on role-selection step
+  if (currentStep === 'role-selection' || !user) {
+    return <RoleSelection onRoleSelect={handleRoleSelect} />;
   }
 
   // Render supplier dashboard if user is a supplier
