@@ -411,10 +411,10 @@ export const SupplierCapabilityForm: React.FC<SupplierCapabilityFormProps> = ({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF8B00] focus:border-[#FF8B00] outline-none"
             >
               <option value="">Any Size</option>
-              <option value="Small (< Rp 10M)">Small (< Rp 10M)</option>
-              <option value="Medium (Rp 10M - 50M)">Medium (Rp 10M - 50M)</option>
-              <option value="Large (Rp 50M - 200M)">Large (Rp 50M - 200M)</option>
-              <option value="Enterprise (> Rp 200M)">Enterprise (> Rp 200M)</option>
+              <option value={"Small (< Rp 10M)"}>Small (< Rp 10M)</option>
+              <option value={"Medium (Rp 10M - 50M)"}>Medium (Rp 10M - 50M)</option>
+              <option value={"Large (Rp 50M - 200M)"}>Large (Rp 50M - 200M)</option>
+              <option value={"Enterprise (> Rp 200M)"}>Enterprise (> Rp 200M)</option>
             </select>
           </div>
         </div>
