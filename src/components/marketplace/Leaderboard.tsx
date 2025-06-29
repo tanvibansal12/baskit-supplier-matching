@@ -288,6 +288,12 @@ export const Leaderboard: React.FC = () => {
                     <div className="flex items-center">
                       <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
                       <span className="text-sm font-medium text-gray-900">{entry.distributor.rating}</span>
+                      {/* Tier indicator */}
+                      <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">
+                        {entry.receiptCount > 500 ? 'Platinum' : 
+                         entry.receiptCount > 200 ? 'Gold' : 
+                         entry.receiptCount > 50 ? 'Silver' : 'Bronze'}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
