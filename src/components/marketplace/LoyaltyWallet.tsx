@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wallet, Star, Gift, History, TrendingUp, Award, Calendar, ArrowRight, Coins, Target } from 'lucide-react';
+import { Wallet, Star, Gift, History, TrendingUp, Award, Calendar, ArrowRight, Coins, Target, Trophy } from 'lucide-react';
 
 interface LoyaltyTransaction {
   id: string;
@@ -253,6 +253,7 @@ export const LoyaltyWallet: React.FC<LoyaltyWalletProps> = ({
                   <div className="text-sm text-gray-600">Next Reward</div>
                   <div className="text-2xl font-bold text-gray-900">{500 - (currentPoints % 500)}</div>
                   <div className="text-sm text-gray-600 mt-1">points needed</div>
+                  <div className="text-xs text-blue-600 mt-1">for next tier benefit</div>
                 </div>
                 <Award className="h-8 w-8 text-yellow-500" />
               </div>
