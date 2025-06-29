@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SupplierCapabilityForm } from './SupplierCapabilityForm';
 import { 
   Package, TrendingUp, Clock, DollarSign, Users, MapPin, 
   Calendar, AlertCircle, CheckCircle, XCircle, Star, 
@@ -8,11 +9,39 @@ import {
 import { DistributorDemand, SupplierQuote, User } from '../../types';
 import { mockDistributorDemands, mockSupplierQuotes } from '../../data/supplierDemandData';
 
+interface SupplierCapability {
+  id: string;
+  productName: string;
+  category: string;
+  minQuantity: number;
+  maxQuantity: number;
+  unitPrice: number;
+  unit: string;
+  leadTime: string;
+}
+
+interface SupplierPreferences {
+  serviceAreas: string[];
+  preferredOrderSize: string;
+  specializations: string[];
+}
+
 interface SupplierDashboardProps {
   user: User;
 }
 
 export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) => {
+  // Supplier capability state
+  const [capabilities, setCapabilities] = useState<SupplierCapability[]>([]);
+  const [preferences, setPreferences] = useState<SupplierPreferences>({
+    serviceAreas: [],
+    preferredOrderSize: '',
+    specializations: []
+  });
+  const [isFormCollapsed, setIsFormCollapsed] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  
+  // Existing state
   const [demands] = useState<DistributorDemand[]>(mockDistributorDemands);
   const [quotes] = useState<SupplierQuote[]>(mockSupplierQuotes);
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,8 +51,58 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
   const [selectedDemand, setSelectedDemand] = useState<DistributorDemand | null>(null);
   const [showQuoteModal, setShowQuoteModal] = useState(false);
 
+  // Enhanced filtering based on supplier capabilities
+  const getMatchingDemands = (): DistributorDemand[] => {
+    if (!hasSearched || capabilities.length === 0) {
+      return demands; // Show all demands if no capabilities set
+    }
+
+    return demands.filter(demand => {
+      // Check if supplier can fulfill any of the demanded items
+      const canFulfillItems = demand.items.some(demandItem => {
+        return capabilities.some(capability => {
+          // Enhanced matching logic
+          const productMatch = capability.productName.toLowerCase().includes(demandItem.productName.toLowerCase()) ||
+                              demandItem.productName.toLowerCase().includes(capability.productName.toLowerCase());
+          
+          const quantityMatch = demandItem.quantity >= capability.minQuantity && 
+                              demandItem.quantity <= capability.maxQuantity;
+          
+          const priceMatch = !demandItem.targetPrice || 
+                           !capability.unitPrice || 
+                           capability.unitPrice <= demandItem.targetPrice * 1.1; // 10% tolerance
+          
+          return productMatch && quantityMatch && priceMatch;
+        });
+      });
+
+      // Check service area match
+      const serviceAreaMatch = preferences.serviceAreas.length === 0 || 
+                             preferences.serviceAreas.some(area => 
+                               demand.deliveryPreferences.location.includes(area) ||
+                               area.includes(demand.deliveryPreferences.location)
+                             );
+
+      // Check order size preference
+      const orderSizeMatch = !preferences.preferredOrderSize || 
+                           checkOrderSizeMatch(demand.budget, preferences.preferredOrderSize);
+
+      return canFulfillItems && serviceAreaMatch && orderSizeMatch;
+    });
+  };
+
+  const checkOrderSizeMatch = (budget: number, preferredSize: string): boolean => {
+    switch (preferredSize) {
+      case 'Small (< Rp 10M)': return budget < 10000000;
+      case 'Medium (Rp 10M - 50M)': return budget >= 10000000 && budget <= 50000000;
+      case 'Large (Rp 50M - 200M)': return budget >= 50000000 && budget <= 200000000;
+      case 'Enterprise (> Rp 200M)': return budget > 200000000;
+      default: return true;
+    }
+  };
+
   // Filter and sort demands
-  const filteredDemands = demands.filter(demand => {
+  const filteredDemands = getMatchingDemands().filter(demand => {
     const matchesSearch = demand.distributorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          demand.items.some(item => item.productName.toLowerCase().includes(searchTerm.toLowerCase())) ||
                          demand.deliveryPreferences.location.toLowerCase().includes(searchTerm.toLowerCase());
@@ -88,6 +167,18 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
+  const handleCapabilitySubmit = () => {
+    if (capabilities.length === 0 || preferences.serviceAreas.length === 0) {
+      return;
+    }
+    setHasSearched(true);
+    setIsFormCollapsed(true);
+  };
+
+  const handleToggleCollapse = () => {
+    setIsFormCollapsed(!isFormCollapsed);
+  };
+
   const handleSubmitQuote = (demand: DistributorDemand) => {
     setSelectedDemand(demand);
     setShowQuoteModal(true);
@@ -99,9 +190,10 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
 
   // Calculate dashboard stats
   const totalDemands = demands.length;
-  const openDemands = demands.filter(d => d.status === 'open').length;
-  const totalBudget = demands.reduce((sum, d) => sum + d.budget, 0);
-  const avgBudget = totalBudget / totalDemands;
+  const matchingDemands = getMatchingDemands();
+  const openDemands = matchingDemands.filter(d => d.status === 'open').length;
+  const totalBudget = matchingDemands.reduce((sum, d) => sum + d.budget, 0);
+  const avgBudget = totalBudget / (matchingDemands.length || 1);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -110,25 +202,39 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Supplier Dashboard</h1>
-            <p className="text-gray-600 mt-2">View distributor demand and submit competitive quotes</p>
+            <p className="text-gray-600 mt-2">Set your capabilities and find matching distributor opportunities</p>
             <div className="text-sm text-gray-500 mt-1">
               Welcome back, <span className="font-medium">{user.companyName || user.name}</span>
             </div>
           </div>
           <div className="bg-gradient-to-r from-[#085B59] to-[#FF8B00] text-white px-6 py-3 rounded-lg">
-            <div className="text-2xl font-bold">{openDemands}</div>
-            <div className="text-sm opacity-90">Open Opportunities</div>
+            <div className="text-2xl font-bold">{hasSearched ? openDemands : totalDemands}</div>
+            <div className="text-sm opacity-90">{hasSearched ? 'Matching Opportunities' : 'Total Opportunities'}</div>
           </div>
         </div>
+
+        {/* Supplier Capability Form */}
+        <SupplierCapabilityForm
+          capabilities={capabilities}
+          preferences={preferences}
+          onCapabilitiesChange={setCapabilities}
+          onPreferencesChange={setPreferences}
+          onSubmit={handleCapabilitySubmit}
+          isCollapsed={isFormCollapsed}
+          onToggleCollapse={handleToggleCollapse}
+          hasResults={hasSearched && filteredDemands.length > 0}
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm text-gray-600">Total Demands</div>
-                <div className="text-2xl font-bold text-gray-900">{totalDemands}</div>
-                <div className="text-sm text-blue-600 mt-1">↗ 12% this week</div>
+                <div className="text-sm text-gray-600">{hasSearched ? 'Matching Demands' : 'Total Demands'}</div>
+                <div className="text-2xl font-bold text-gray-900">{hasSearched ? matchingDemands.length : totalDemands}</div>
+                <div className="text-sm text-blue-600 mt-1">
+                  {hasSearched ? `${Math.round((matchingDemands.length / totalDemands) * 100)}% match rate` : '↗ 12% this week'}
+                </div>
               </div>
               <Package className="h-8 w-8 text-[#085B59]" />
             </div>
@@ -139,7 +245,7 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
               <div>
                 <div className="text-sm text-gray-600">Open Opportunities</div>
                 <div className="text-2xl font-bold text-green-600">{openDemands}</div>
-                <div className="text-sm text-green-600 mt-1">Ready to quote</div>
+                <div className="text-sm text-green-600 mt-1">{hasSearched ? 'Matching your capabilities' : 'Ready to quote'}</div>
               </div>
               <Target className="h-8 w-8 text-green-500" />
             </div>
@@ -152,7 +258,7 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
                 <div className="text-2xl font-bold text-[#FF8B00]">
                   Rp{(totalBudget / 1000000).toFixed(1)}M
                 </div>
-                <div className="text-sm text-gray-600 mt-1">Available market</div>
+                <div className="text-sm text-gray-600 mt-1">{hasSearched ? 'Matching opportunities' : 'Available market'}</div>
               </div>
               <DollarSign className="h-8 w-8 text-[#FF8B00]" />
             </div>
@@ -172,8 +278,31 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
           </div>
         </div>
 
+        {/* Capability Match Info */}
+        {hasSearched && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center">
+              <Target className="h-5 w-5 text-blue-600 mr-2" />
+              <span className="text-sm text-blue-800">
+                Showing <span className="font-semibold">{filteredDemands.length}</span> opportunities that match your capabilities:
+                <span className="ml-2">
+                  {capabilities.map(c => c.productName).filter(Boolean).slice(0, 3).join(', ')}
+                  {capabilities.length > 3 && ` +${capabilities.length - 3} more`}
+                </span>
+                {preferences.serviceAreas.length > 0 && (
+                  <span className="ml-2">
+                    • Areas: {preferences.serviceAreas.slice(0, 2).join(', ')}
+                    {preferences.serviceAreas.length > 2 && ` +${preferences.serviceAreas.length - 2} more`}
+                  </span>
+                )}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        {hasSearched && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="md:col-span-2">
               <div className="relative">
@@ -230,19 +359,37 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* Demands List */}
-      <div className="space-y-6">
+      {hasSearched && (
+        <div className="space-y-6">
         {sortedDemands.map((demand) => {
           const daysUntilExpiry = getDaysUntilExpiry(demand.expiresAt);
           const isExpiringSoon = daysUntilExpiry <= 2;
           
+          // Calculate match score for this demand
+          const matchScore = calculateMatchScore(demand, capabilities, preferences);
+          
           return (
-            <div key={demand.id} className={`bg-white rounded-lg shadow-md border overflow-hidden hover:shadow-lg transition-all duration-300 ${
+            <div key={demand.id} className={`bg-white rounded-lg shadow-md border overflow-hidden hover:shadow-lg transition-all duration-300 relative ${
               demand.urgency === 'urgent' ? 'border-red-300 bg-red-50/30' : 
               isExpiringSoon ? 'border-orange-300 bg-orange-50/30' : 'border-gray-200'
             }`}>
+              {/* Match Score Badge */}
+              {hasSearched && matchScore > 0 && (
+                <div className="absolute top-4 right-4 z-10">
+                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    matchScore >= 80 ? 'bg-green-100 text-green-800' :
+                    matchScore >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-blue-100 text-blue-800'
+                  }`}>
+                    {matchScore}% Match
+                  </div>
+                </div>
+              )}
+              
               <div className="p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -377,12 +524,27 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
           );
         })}
       </div>
+      )}
 
-      {sortedDemands.length === 0 && (
+      {hasSearched && sortedDemands.length === 0 && (
         <div className="text-center py-12">
           <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-900 mb-2">No demands found</h3>
-          <p className="text-gray-600">Try adjusting your search or filter criteria.</p>
+          <h3 className="text-xl font-medium text-gray-900 mb-2">No matching opportunities found</h3>
+          <p className="text-gray-600">Try adjusting your capabilities, service areas, or search criteria.</p>
+          <button
+            onClick={handleToggleCollapse}
+            className="mt-4 bg-[#FF8B00] text-white px-6 py-2 rounded-lg hover:bg-[#e67a00] transition-colors"
+          >
+            Update Capabilities
+          </button>
+        </div>
+      )}
+
+      {!hasSearched && (
+        <div className="text-center py-12">
+          <Target className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-gray-900 mb-2">Set Your Capabilities</h3>
+          <p className="text-gray-600">Define what products you can supply and your service areas to find matching opportunities.</p>
         </div>
       )}
 
@@ -474,4 +636,66 @@ export const SupplierDashboard: React.FC<SupplierDashboardProps> = ({ user }) =>
       )}
     </div>
   );
+};
+
+// Helper function to calculate match score
+const calculateMatchScore = (
+  demand: DistributorDemand, 
+  capabilities: SupplierCapability[], 
+  preferences: SupplierPreferences
+): number => {
+  let score = 0;
+  let factors = 0;
+
+  // Product match (40% weight)
+  const productMatches = demand.items.filter(demandItem =>
+    capabilities.some(capability =>
+      capability.productName.toLowerCase().includes(demandItem.productName.toLowerCase()) ||
+      demandItem.productName.toLowerCase().includes(capability.productName.toLowerCase())
+    )
+  );
+  if (demand.items.length > 0) {
+    score += (productMatches.length / demand.items.length) * 40;
+    factors += 40;
+  }
+
+  // Service area match (30% weight)
+  const areaMatch = preferences.serviceAreas.some(area =>
+    demand.deliveryPreferences.location.includes(area) ||
+    area.includes(demand.deliveryPreferences.location)
+  );
+  if (areaMatch) {
+    score += 30;
+  }
+  factors += 30;
+
+  // Order size preference match (20% weight)
+  const orderSizeMatch = !preferences.preferredOrderSize || 
+    checkOrderSizeMatch(demand.budget, preferences.preferredOrderSize);
+  if (orderSizeMatch) {
+    score += 20;
+  }
+  factors += 20;
+
+  // Urgency bonus (10% weight)
+  if (demand.urgency === 'urgent') {
+    score += 10;
+  } else if (demand.urgency === 'high') {
+    score += 7;
+  } else if (demand.urgency === 'medium') {
+    score += 5;
+  }
+  factors += 10;
+
+  return Math.round((score / factors) * 100);
+};
+
+const checkOrderSizeMatch = (budget: number, preferredSize: string): boolean => {
+  switch (preferredSize) {
+    case 'Small (< Rp 10M)': return budget < 10000000;
+    case 'Medium (Rp 10M - 50M)': return budget >= 10000000 && budget <= 50000000;
+    case 'Large (Rp 50M - 200M)': return budget >= 50000000 && budget <= 200000000;
+    case 'Enterprise (> Rp 200M)': return budget > 200000000;
+    default: return true;
+  }
 };
