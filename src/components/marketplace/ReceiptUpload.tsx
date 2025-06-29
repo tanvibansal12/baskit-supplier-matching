@@ -333,9 +333,11 @@ export const ReceiptUpload: React.FC<ReceiptUploadProps> = ({ onReceiptSubmit, u
               <p className="font-medium mb-1">Receipt Upload Guidelines:</p>
               <ul className="list-disc list-inside space-y-1 text-xs">
                 <li>Ensure receipt is clear and readable</li>
+                <li>Include phone number for WhatsApp verification</li>
                 <li>Include store name, date, and purchased items</li>
                 <li>Receipt must be from the last 30 days</li>
                 <li>Points are credited after verification (1-2 business days)</li>
+                <li>Higher tiers earn bonus multipliers on points</li>
               </ul>
             </div>
           </div>

@@ -10,8 +10,11 @@ import { RealSupplierCard } from './RealSupplierCard';
 import { TransactionSimulator } from './TransactionSimulator';
 import { FlywheelDashboard } from './FlywheelDashboard';
 import { realSuppliers, simulateTransaction, Transaction, RealSupplier } from '../../data/realSuppliersData';
+import { ERMCatalogCRM } from '../erp/ERMCatalogCRM';
+import { BaskitShop } from '../shop/BaskitShop';
+import { PartnerPortal } from '../partner/PartnerPortal';
 
-type ActiveModule = 'marketplace' | 'receipt-upload' | 'loyalty-wallet' | 'leaderboard' | 'campaign-manager' | 'whatsapp' | 'real-suppliers' | 'flywheel';
+type ActiveModule = 'marketplace' | 'receipt-upload' | 'loyalty-wallet' | 'leaderboard' | 'campaign-manager' | 'whatsapp' | 'real-suppliers' | 'flywheel' | 'erm' | 'shop' | 'partner';
 
 interface User {
   id: string;
@@ -72,6 +75,9 @@ export const MarketplaceApp: React.FC = () => {
 
   const modules = [
     { id: 'flywheel' as ActiveModule, name: 'GTM Flywheel', icon: TrendingUp, description: 'Six-step network flywheel strategy' },
+    { id: 'erm' as ActiveModule, name: 'ERM Catalog & CRM', icon: Building2, description: 'Brand-side visibility and campaign management' },
+    { id: 'shop' as ActiveModule, name: 'Baskit Shop', icon: Store, description: 'Retailer shopping experience with loyalty' },
+    { id: 'partner' as ActiveModule, name: 'Partner Portal', icon: Users, description: 'Distributor GT management and RiskWatch' },
     { id: 'real-suppliers' as ActiveModule, name: 'Real Suppliers', icon: Building2, description: 'Browse real Indonesian suppliers with actual SKUs' },
     { id: 'marketplace' as ActiveModule, name: 'Marketplace', icon: Store, description: 'Browse brand listings' },
     { id: 'receipt-upload' as ActiveModule, name: 'Receipt Upload', icon: Upload, description: 'Upload receipts for loyalty points' },
@@ -85,6 +91,12 @@ export const MarketplaceApp: React.FC = () => {
     switch (activeModule) {
       case 'flywheel':
         return <FlywheelDashboard />;
+      case 'erm':
+        return <ERMCatalogCRM />;
+      case 'shop':
+        return <BaskitShop />;
+      case 'partner':
+        return <PartnerPortal />;
       case 'real-suppliers':
         return (
           <div className="space-y-6">
