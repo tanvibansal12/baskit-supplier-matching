@@ -173,10 +173,10 @@ export const SupplierCapabilityForm: React.FC<SupplierCapabilityFormProps> = ({
             >
               <Edit3 className="h-4 w-4 mr-2" />
               Edit
-    case 'Small (< Rp 10 M)': return budget < 10000000;
-    case 'Medium (Rp 10 M - 50 M)': return budget >= 10000000 && budget <= 50000000;
-    case 'Large (Rp 50 M - 200 M)': return budget >= 50000000 && budget <= 200000000;
-    case 'Enterprise (> Rp 200 M)': return budget > 200000000;
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 
