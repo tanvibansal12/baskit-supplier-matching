@@ -173,10 +173,10 @@ export const SupplierCapabilityForm: React.FC<SupplierCapabilityFormProps> = ({
             >
               <Edit3 className="h-4 w-4 mr-2" />
               Edit
-            </button>
-          </div>
-        </div>
-      </div>
+    case 'Small (< Rp 10 M)': return budget < 10000000;
+    case 'Medium (Rp 10 M - 50 M)': return budget >= 10000000 && budget <= 50000000;
+    case 'Large (Rp 50 M - 200 M)': return budget >= 50000000 && budget <= 200000000;
+    case 'Enterprise (> Rp 200 M)': return budget > 200000000;
     );
   }
 
@@ -411,10 +411,10 @@ export const SupplierCapabilityForm: React.FC<SupplierCapabilityFormProps> = ({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF8B00] focus:border-[#FF8B00] outline-none"
             >
               <option value="">Any Size</option>
-              <option value={"Small (< Rp 10 M)"}>Small (&lt; Rp 10 M)</option>
-              <option value={"Medium (Rp 10 M - 50 M)"}>Medium (Rp 10 M - 50 M)</option>
-              <option value={"Large (Rp 50 M - 200 M)"}>Large (Rp 50 M - 200 M)</option>
-              <option value={"Enterprise (> Rp 200 M)"}>Enterprise (&gt; Rp 200 M)</option>
+              <option value="Small (< Rp 10 M)">Small (&lt; Rp 10 M)</option>
+              <option value="Medium (Rp 10 M - 50 M)">Medium (Rp 10 M - 50 M)</option>
+              <option value="Large (Rp 50 M - 200 M)">Large (Rp 50 M - 200 M)</option>
+              <option value="Enterprise (> Rp 200 M)">Enterprise (&gt; Rp 200 M)</option>
             </select>
           </div>
         </div>
