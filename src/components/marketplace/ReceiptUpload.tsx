@@ -120,6 +120,18 @@ export const ReceiptUpload: React.FC<ReceiptUploadProps> = ({ onReceiptSubmit, u
             </div>
             <div className="text-3xl font-bold">{calculatePoints()} Points</div>
             <div className="text-sm opacity-90 mt-1">Added to your loyalty wallet</div>
+            
+            {/* Tier Progress */}
+            <div className="mt-4 bg-white/20 rounded-lg p-3">
+              <div className="text-sm opacity-90 mb-1">Tier Progress</div>
+              <div className="flex items-center justify-between text-sm">
+                <span>Silver Partner</span>
+                <span>78% to Gold</span>
+              </div>
+              <div className="w-full bg-white/30 rounded-full h-2 mt-2">
+                <div className="bg-white h-2 rounded-full" style={{ width: '78%' }}></div>
+              </div>
+            </div>
           </div>
           
           <div className="text-sm text-gray-600">

@@ -383,12 +383,13 @@ export const WhatsAppIntegration: React.FC<WhatsAppIntegrationProps> = ({
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(message.type)}`}>
+                  Includes tier progress and exclusive offers based on user status.
                       {message.type.charAt(0).toUpperCase() + message.type.slice(1)}
                     </span>
                     <div className="flex items-center">
                       {getStatusIcon(message.status)}
-                      <span className="text-xs text-gray-500 ml-1">{message.status}</span>
-                    </div>
+                    "✅ Receipt verified! You earned {points} loyalty points. Receipt ID: {receiptId}. 
+                    🏆 Gold tier progress: 78% to Platinum! Keep uploading for exclusive benefits! 🎉"
                   </div>
                 </div>
                 

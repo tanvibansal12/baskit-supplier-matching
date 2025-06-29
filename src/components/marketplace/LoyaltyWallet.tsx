@@ -161,6 +161,23 @@ export const LoyaltyWallet: React.FC<LoyaltyWalletProps> = ({
               <div className="text-xl font-bold">{totalRedeemed.toLocaleString()}</div>
             </div>
           </div>
+          
+          {/* Tier Status */}
+          <div className="mt-4 bg-white/20 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <Trophy className="h-5 w-5 mr-2" />
+                <span className="font-semibold">Gold Partner Status</span>
+              </div>
+              <div className="text-sm opacity-90">Next: Platinum</div>
+            </div>
+            <div className="w-full bg-white/30 rounded-full h-3">
+              <div className="bg-white h-3 rounded-full" style={{ width: '67%' }}></div>
+            </div>
+            <div className="text-xs opacity-75 mt-1">
+              Upload 89 more receipts to reach Platinum tier
+            </div>
+          </div>
         </div>
       </div>
 

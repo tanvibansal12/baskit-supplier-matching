@@ -8,9 +8,10 @@ import { CampaignManager } from './CampaignManager';
 import { WhatsAppIntegration } from './WhatsAppIntegration';
 import { RealSupplierCard } from './RealSupplierCard';
 import { TransactionSimulator } from './TransactionSimulator';
+import { FlywheelDashboard } from './FlywheelDashboard';
 import { realSuppliers, simulateTransaction, Transaction, RealSupplier } from '../../data/realSuppliersData';
 
-type ActiveModule = 'marketplace' | 'receipt-upload' | 'loyalty-wallet' | 'leaderboard' | 'campaign-manager' | 'whatsapp' | 'real-suppliers';
+type ActiveModule = 'marketplace' | 'receipt-upload' | 'loyalty-wallet' | 'leaderboard' | 'campaign-manager' | 'whatsapp' | 'real-suppliers' | 'flywheel';
 
 interface User {
   id: string;
@@ -70,6 +71,7 @@ export const MarketplaceApp: React.FC = () => {
   };
 
   const modules = [
+    { id: 'flywheel' as ActiveModule, name: 'GTM Flywheel', icon: TrendingUp, description: 'Six-step network flywheel strategy' },
     { id: 'real-suppliers' as ActiveModule, name: 'Real Suppliers', icon: Building2, description: 'Browse real Indonesian suppliers with actual SKUs' },
     { id: 'marketplace' as ActiveModule, name: 'Marketplace', icon: Store, description: 'Browse brand listings' },
     { id: 'receipt-upload' as ActiveModule, name: 'Receipt Upload', icon: Upload, description: 'Upload receipts for loyalty points' },
@@ -81,6 +83,8 @@ export const MarketplaceApp: React.FC = () => {
 
   const renderActiveModule = () => {
     switch (activeModule) {
+      case 'flywheel':
+        return <FlywheelDashboard />;
       case 'real-suppliers':
         return (
           <div className="space-y-6">
